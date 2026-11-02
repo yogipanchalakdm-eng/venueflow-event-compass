@@ -3,7 +3,8 @@ import { z } from "zod";
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date");
 const time = z.string().regex(/^\d{2}:\d{2}$/, "Pick a time");
 const optionalText = (max: number) => z.string().trim().max(max).optional().default("");
-const qty = z.coerce.number().int().min(1, "At least 1").max(9999);
+const qty = z.coerce.number({ invalid_type_error: "Enter a number" }).int().min(1, "At least 1").max(9999);
+const yesNo = z.boolean({ invalid_type_error: "Choose yes or no", required_error: "Choose yes or no" });
 
 export const MEALS = ["breakfast", "lunch", "dinner"] as const;
 export const MEAL_LABEL: Record<(typeof MEALS)[number], string> = {
@@ -76,7 +77,7 @@ export const facilitiesSchema = z
 export const itNetworkSchema = z
   .object({
     ...roomsAndSchedule,
-    wifiNeeded: z.boolean(),
+    wifiNeeded: yesNo,
     networks: z.array(z.string().trim().max(32)).max(10).default([]),
   })
   .refine(endAfterStart, { path: ["endDate"], message: "End date can't be before the start date" })
@@ -97,7 +98,7 @@ export const kitchenSchema = z
       )
       .min(1, "Add at least one serving day")
       .max(31),
-    volunteersEarly: z.boolean(),
+    volunteersEarly: yesNo,
     volunteerArrival: z.string().optional().default(""),
     volunteerCount: z.coerce.number().int().min(0).max(9999).optional().default(0),
     volunteersNeedFood: z.boolean().optional().default(false),
