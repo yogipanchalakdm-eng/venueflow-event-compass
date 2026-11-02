@@ -14,16 +14,214 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          departments: Database["public"]["Enums"]["department"][]
+          description: string | null
+          end_date: string
+          id: string
+          location: string | null
+          name: string
+          normalized_name: string
+          source: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          departments?: Database["public"]["Enums"]["department"][]
+          description?: string | null
+          end_date: string
+          id?: string
+          location?: string | null
+          name: string
+          normalized_name: string
+          source?: string
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          departments?: Database["public"]["Enums"]["department"][]
+          description?: string | null
+          end_date?: string
+          id?: string
+          location?: string | null
+          name?: string
+          normalized_name?: string
+          source?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      requests: {
+        Row: {
+          attachments: Json
+          comments: string | null
+          created_at: string
+          department: Database["public"]["Enums"]["department"]
+          details: Json
+          end_date: string | null
+          event_id: string
+          id: string
+          internal_notes: string | null
+          start_date: string | null
+          status: string
+          submission_id: string
+          updated_at: string
+        }
+        Insert: {
+          attachments?: Json
+          comments?: string | null
+          created_at?: string
+          department: Database["public"]["Enums"]["department"]
+          details?: Json
+          end_date?: string | null
+          event_id: string
+          id?: string
+          internal_notes?: string | null
+          start_date?: string | null
+          status?: string
+          submission_id: string
+          updated_at?: string
+        }
+        Update: {
+          attachments?: Json
+          comments?: string | null
+          created_at?: string
+          department?: Database["public"]["Enums"]["department"]
+          details?: Json
+          end_date?: string | null
+          event_id?: string
+          id?: string
+          internal_notes?: string | null
+          start_date?: string | null
+          status?: string
+          submission_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requests_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requests_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submissions: {
+        Row: {
+          created_at: string
+          email: string
+          event_date: string
+          event_id: string
+          event_name: string
+          id: string
+          phone: string
+          requester_name: string
+          team: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          event_date: string
+          event_id: string
+          event_name: string
+          id?: string
+          phone: string
+          requester_name: string
+          team: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          event_date?: string
+          event_id?: string
+          event_name?: string
+          id?: string
+          phone?: string
+          requester_name?: string
+          team?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          department: Database["public"]["Enums"]["department"] | null
+          display_name: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          department?: Database["public"]["Enums"]["department"] | null
+          display_name?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          department?: Database["public"]["Enums"]["department"] | null
+          display_name?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
+      merge_events: {
+        Args: { _from: string; _into: string }
+        Returns: undefined
+      }
+      refresh_event: { Args: { _event_id: string }; Returns: undefined }
+      user_department: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["department"]
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "master" | "lead"
+      department:
+        | "facilities"
+        | "it_network"
+        | "kitchen"
+        | "audio_video"
+        | "photo_video"
+        | "parking"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +348,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["master", "lead"],
+      department: [
+        "facilities",
+        "it_network",
+        "kitchen",
+        "audio_video",
+        "photo_video",
+        "parking",
+      ],
+    },
   },
 } as const
