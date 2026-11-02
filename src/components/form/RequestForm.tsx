@@ -199,7 +199,7 @@ export function RequestForm() {
             const sectionProps = { details: d.details, set: setDetails, err: e, idPrefix: d.key };
             const sources = isMapDept(d.department) ? mapSources(drafts, i) : [];
             return (
-              <div key={d.key} className={cn("rounded-xl border bg-surface/60 p-4 transition-colors sm:p-6", meta ? meta.border + "/40" : "border-border")}>
+              <div key={d.key} className={cn("rounded-xl border bg-surface/60 p-4 transition-colors sm:p-6", meta ? meta.border : "border-border")}>
                 <div className="mb-4 flex items-center justify-between">
                   <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                     Request {String(i + 1).padStart(2, "0")}
@@ -229,7 +229,7 @@ export function RequestForm() {
                           on ? cn(m.border, m.softBg) : "border-input bg-field hover:border-muted-foreground/50",
                         )}
                       >
-                        <Icon className={cn("mt-0.5 h-5 w-5 shrink-0", on ? m.text : "text-muted-foreground group-hover:" + m.text)} />
+                        <Icon className={cn("mt-0.5 h-5 w-5 shrink-0", on ? m.text : "text-muted-foreground group-hover:text-foreground")} />
                         <span className="min-w-0">
                           <span className="block text-[15px] font-semibold leading-tight">{m.label}</span>
                           <span className="mt-0.5 hidden text-xs text-muted-foreground sm:block">{m.blurb}</span>

@@ -119,7 +119,7 @@ export function VenueMap({ value, onChange, department = "facilities", readOnly,
                   strokeWidth={on ? 3 : 1.5}
                   className={cn(
                     "transition-all",
-                    on ? cn(meta.fill, meta.stroke, "fill-opacity-80") : "fill-map-room stroke-map-wall",
+                    on ? cn(meta.fill, meta.stroke) : "fill-map-room stroke-map-wall",
                     !readOnly && !on && "group-hover:fill-map-room-hover group-focus-visible:fill-map-room-hover",
                   )}
                   style={on ? { fillOpacity: 0.85 } : undefined}
