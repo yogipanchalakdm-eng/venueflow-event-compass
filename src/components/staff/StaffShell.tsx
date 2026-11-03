@@ -24,11 +24,11 @@ function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; onOpenCha
   const [busy, setBusy] = useState(false);
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (next.length < 10) return toast.error("Use at least 10 characters");
+    if (next.length < 10) return void toast.error("Use at least 10 characters");
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: next, current_password: current } as never);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Password updated");
     setCurrent("");
     setNext("");

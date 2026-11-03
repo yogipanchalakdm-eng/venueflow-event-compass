@@ -38,7 +38,7 @@ function Attachments({ files }: { files: { path: string; name: string; size: num
   if (!files?.length) return null;
   const open = async (path: string) => {
     const { data, error } = await supabase.storage.from("request-attachments").createSignedUrl(path, 300);
-    if (error || !data) return toast.error("Couldn't open that file");
+    if (error || !data) return void toast.error("Couldn't open that file");
     window.open(data.signedUrl, "_blank", "noopener");
   };
   return (
@@ -66,7 +66,7 @@ function RequestCard({ r, requester, canEdit, onChanged }: { r: RequestRow; requ
     setSaving(true);
     const { error } = await supabase.from("requests").update({ ...patch, updated_at: new Date().toISOString() }).eq("id", r.id);
     setSaving(false);
-    if (error) return toast.error("Couldn't save");
+    if (error) return void toast.error("Couldn't save");
     toast.success("Saved");
     onChanged();
   };
@@ -140,7 +140,7 @@ function MergeDialog({ open, onOpenChange, eventId }: { open: boolean; onOpenCha
   const merge = async () => {
     if (!target) return;
     const { error } = await supabase.rpc("merge_events", { _from: eventId, _into: target });
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Events merged");
     await qc.invalidateQueries();
     onOpenChange(false);
@@ -203,7 +203,7 @@ function EventPage() {
   const deleteEvent = async () => {
     if (!confirm(`Delete "${event.name}" and all of its requests? This can't be undone.`)) return;
     const { error } = await supabase.from("events").delete().eq("id", event.id);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Event deleted");
     await qc.invalidateQueries();
     navigate({ to: "/dashboard" });
