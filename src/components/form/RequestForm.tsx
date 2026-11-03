@@ -52,11 +52,18 @@ export function RequestForm() {
     setDrafts((ds) => ds.map((d) => (d.key === key ? fn(d) : d)));
 
   const chooseDept = (key: string, dept: Department) =>
-    updateDraft(key, (d) => {
-      if (d.department === dept) return d;
-      const details = defaultDetails(dept, about.eventDate);
-      return { ...d, department: dept, details };
-    });
+    setDrafts((ds) =>
+      ds.map((d, i) => {
+        if (d.key !== key || d.department === dept) return d;
+        const details = defaultDetails(dept, about.eventDate);
+        // Facilities and IT usually cover the same rooms: start from the earlier pick.
+        if (isMapDept(dept)) {
+          const src = mapSources(ds, i)[0];
+          if (src) Object.assign(details, { mapMode: "shared", sharedKey: src.key });
+        }
+        return { ...d, department: dept, details };
+      }),
+    );
 
   const removeDraft = (key: string) =>
     setDrafts((ds) =>
