@@ -51,7 +51,7 @@ function AccountsPage() {
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!target) return;
-    if (pw.length < 10) return toast.error("Use at least 10 characters");
+    if (pw.length < 10) return void toast.error("Use at least 10 characters");
     setBusy(true);
     try {
       await resetFn({ data: { userId: target.id, password: pw } });
