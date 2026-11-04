@@ -148,7 +148,7 @@ function BoardPage() {
         <p className="text-xs text-muted-foreground sm:ml-auto">Drag cards between columns, or tap a card to update it.</p>
       </div>
 
-      <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6">
+      <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:px-0">
         {STATUS_OPTIONS.map((col) => {
           const cards = visible.filter((r) => r.status === col.value);
           return (
@@ -168,7 +168,7 @@ function BoardPage() {
                 setDragId(null);
               }}
               className={cn(
-                "flex w-[82vw] max-w-[300px] shrink-0 snap-start flex-col rounded-2xl border bg-surface/60 p-3 transition-colors sm:w-[280px]",
+                "flex w-[82vw] max-w-[300px] shrink-0 snap-start flex-col rounded-2xl border bg-surface/60 p-3 transition-colors sm:w-[260px] xl:w-auto xl:min-w-[200px] xl:max-w-none xl:flex-1",
                 overCol === col.value ? "border-account bg-account/5" : "border-border",
               )}
             >
