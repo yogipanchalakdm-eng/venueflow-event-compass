@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { CalendarDays, ChevronDown, Crown, KeyRound, LayoutDashboard, LogOut, Repeat, Users, FileText } from "lucide-react";
+import { CalendarDays, ChevronDown, Crown, KeyRound, KanbanSquare, LayoutDashboard, LogOut, Repeat, Users, UserPlus, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { DEPT } from "@/lib/departments";
 import { useStaffProfile } from "@/hooks/use-staff";
+import { canManageTeam, hasRequestBoard } from "@/lib/team";
 import { Brand } from "@/components/site/Brand";
 import {
   DropdownMenu,
@@ -71,6 +72,8 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
   const tabs = [
     { to: "/dashboard" as const, label: "Dashboard", icon: LayoutDashboard },
     { to: "/calendar" as const, label: "Calendar", icon: CalendarDays },
+    ...(hasRequestBoard(me) ? [{ to: "/board" as const, label: "Request Management", icon: KanbanSquare }] : []),
+    ...(isMaster || canManageTeam(me, me?.department) ? [{ to: "/team" as const, label: "Team", icon: UserPlus }] : []),
     ...(isMaster ? [{ to: "/accounts" as const, label: "Accounts", icon: Users }] : []),
   ];
 
@@ -112,7 +115,7 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
                   <span className="block">{me?.displayName}</span>
-                  <span className="block text-xs font-normal text-muted-foreground">{isMaster ? "Master · sees everything" : "Department lead"}</span>
+                  <span className="block text-xs font-normal text-muted-foreground">{isMaster ? "Master · sees everything" : me?.role === "member" ? `Team member · ${meta?.label ?? ""}` : "Team account"}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => navigate({ to: "/auth" })}>
