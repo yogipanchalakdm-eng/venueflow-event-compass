@@ -148,7 +148,7 @@ function BoardPage() {
         <p className="text-xs text-muted-foreground sm:ml-auto">Drag cards between columns, or tap a card to update it.</p>
       </div>
 
-      <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:px-0">
+      <div className="-mx-4 flex snap-x scroll-px-4 gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:scroll-px-0 sm:px-0">
         {STATUS_OPTIONS.map((col) => {
           const cards = visible.filter((r) => r.status === col.value);
           return (
