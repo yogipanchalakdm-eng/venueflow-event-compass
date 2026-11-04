@@ -46,3 +46,38 @@ export const staffAccountsQuery = queryOptions({
     return data;
   },
 });
+
+export type TeamMember = { user_id: string; role: string; department: string | null; display_name: string; username: string | null };
+
+export const teamQuery = (department: string) =>
+  queryOptions({
+    queryKey: ["team", department],
+    queryFn: async (): Promise<TeamMember[]> => {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("user_id, role, department, display_name, username")
+        .eq("department", department as never)
+        .order("role")
+        .order("display_name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+export const boardQuery = (department: string) =>
+  queryOptions({
+    queryKey: ["board", department],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("requests")
+        .select(
+          "*, event:events(id, name, start_date, end_date, location), submission:submissions(requester_name, team, phone, email, created_at)",
+        )
+        .eq("department", department as never)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+export type BoardRequest = Awaited<ReturnType<NonNullable<ReturnType<typeof boardQuery>["queryFn"]>>>[number];
