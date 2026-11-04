@@ -61,6 +61,7 @@ export type Database = {
       }
       requests: {
         Row: {
+          assigned_to: string | null
           attachments: Json
           comments: string | null
           created_at: string
@@ -76,6 +77,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          assigned_to?: string | null
           attachments?: Json
           comments?: string | null
           created_at?: string
@@ -91,6 +93,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          assigned_to?: string | null
           attachments?: Json
           comments?: string | null
           created_at?: string
