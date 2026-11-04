@@ -5,7 +5,7 @@ import type { Department } from "@/lib/departments";
 export type StaffProfile = {
   userId: string;
   email: string;
-  role: "master" | "lead" | null;
+  role: "master" | "lead" | "member" | null;
   department: Department | null;
   displayName: string;
 };
@@ -20,6 +20,7 @@ export const staffProfileQuery = queryOptions({
       .from("user_roles")
       .select("role, department, display_name")
       .eq("user_id", user.id)
+      .order("role")
       .limit(1)
       .maybeSingle();
     return {

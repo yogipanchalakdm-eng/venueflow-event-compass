@@ -41,7 +41,7 @@ export const eventDetailQuery = (id: string) =>
 export const staffAccountsQuery = queryOptions({
   queryKey: ["staff-accounts"],
   queryFn: async () => {
-    const { data, error } = await supabase.from("user_roles").select("user_id, role, department, display_name").order("role");
+    const { data, error } = await supabase.from("user_roles").select("user_id, role, department, display_name, username").order("role").order("department").order("display_name");
     if (error) throw error;
     return data;
   },

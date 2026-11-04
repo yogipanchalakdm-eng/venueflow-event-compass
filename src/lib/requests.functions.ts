@@ -188,21 +188,3 @@ export const importCalendarEvents = createServerFn({ method: "POST" })
     }
     return { added, synced };
   });
-
-/** Master only: set a new password for any staff account. */
-export const resetStaffPassword = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
-    z.object({ userId: z.string().uuid(), password: z.string().min(10).max(72) }).parse(data),
-  )
-  .handler(async ({ data, context }) => {
-    const { data: isMaster } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "master",
-    });
-    if (!isMaster) throw new Error("Only the master account can reset passwords");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, { password: data.password });
-    if (error) throw new Error(error.message);
-    return { ok: true };
-  });
