@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { DEPT, type Department } from "@/lib/departments";
 import { staffAccountsQuery } from "@/lib/staff-data";
-import { resetStaffPassword } from "@/lib/requests.functions";
+import { resetStaffPassword } from "@/lib/team.functions";
+import { roleLabel } from "@/lib/team";
 import { staffProfileQuery } from "@/hooks/use-staff";
 import { StaffShell } from "@/components/staff/StaffShell";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -68,7 +69,7 @@ function AccountsPage() {
   return (
     <StaffShell title="Accounts">
       <p className="mb-5 max-w-2xl text-muted-foreground">
-        Each team has one shared login. Department leads only see their own team's requests; the master account sees and manages everything.
+        Each team has one shared team account, plus any team members its lead adds from the Team page. Teams only see their own requests; the master account sees and manages everything.
       </p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {accounts.map((a) => {
@@ -81,7 +82,7 @@ function AccountsPage() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">{a.display_name}</p>
-                <p className="text-xs text-muted-foreground">{a.role === "master" ? "Master · full access" : "Department lead"}</p>
+                <p className="text-xs text-muted-foreground">{roleLabel(a.role)}{a.username ? ` · ${a.username}` : ""}</p>
               </div>
               <button
                 onClick={() => setTarget({ id: a.user_id, name: a.display_name })}

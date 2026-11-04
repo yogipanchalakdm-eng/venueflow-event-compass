@@ -15,6 +15,27 @@
       "when": 1793596717921,
       "tag": "0001_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793754606188,
+      "tag": "0002_add_member_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793754621322,
+      "tag": "0003_team_members_and_assignment",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793754657417,
+      "tag": "0004_user_roles_username",
+      "breakpoints": true
     }
   ]
 }

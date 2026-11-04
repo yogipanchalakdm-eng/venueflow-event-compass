@@ -61,6 +61,7 @@ export type Database = {
       }
       requests: {
         Row: {
+          assigned_to: string | null
           attachments: Json
           comments: string | null
           created_at: string
@@ -76,6 +77,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          assigned_to?: string | null
           attachments?: Json
           comments?: string | null
           created_at?: string
@@ -91,6 +93,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          assigned_to?: string | null
           attachments?: Json
           comments?: string | null
           created_at?: string
@@ -173,6 +176,7 @@ export type Database = {
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
+          username: string | null
         }
         Insert: {
           department?: Database["public"]["Enums"]["department"] | null
@@ -180,6 +184,7 @@ export type Database = {
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
+          username?: string | null
         }
         Update: {
           department?: Database["public"]["Enums"]["department"] | null
@@ -187,6 +192,7 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -214,7 +220,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "master" | "lead"
+      app_role: "master" | "lead" | "member"
       department:
         | "facilities"
         | "it_network"
@@ -349,7 +355,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["master", "lead"],
+      app_role: ["master", "lead", "member"],
       department: [
         "facilities",
         "it_network",
