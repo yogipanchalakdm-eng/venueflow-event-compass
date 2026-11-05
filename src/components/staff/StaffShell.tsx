@@ -118,6 +118,9 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
                   <span className="block text-xs font-normal text-muted-foreground">{isMaster ? "Master · sees everything" : me?.role === "member" ? `Team member · ${meta?.label ?? ""}` : "Team account"}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate({ to: "/" })}>
+                  <FileText className="mr-2 h-4 w-4" /> Request form
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => navigate({ to: "/auth" })}>
                   <Repeat className="mr-2 h-4 w-4" /> Switch account
                 </DropdownMenuItem>
