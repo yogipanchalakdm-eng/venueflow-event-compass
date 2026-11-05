@@ -5,10 +5,10 @@ import { CalendarClock, ExternalLink, Mail, Paperclip, Phone, Search, UserRound 
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { DEPT, STATUS_OPTIONS, type Department } from "@/lib/departments";
-import { DESIGN_ITEMS, MEDIA_ITEMS } from "@/lib/request-schema";
+import { DEPARTMENTS, DEPT, STATUS_OPTIONS, type Department } from "@/lib/departments";
+import { cardSummary } from "@/lib/request-summary";
 import { boardQuery, teamQuery, type BoardRequest, type TeamMember } from "@/lib/staff-data";
-import { BOARD_DEPARTMENTS, hasRequestBoard } from "@/lib/team";
+import { boardDepartment, hasRequestBoard } from "@/lib/team";
 import { fmtDate, fmtRange } from "@/lib/dates";
 import { staffProfileQuery } from "@/hooks/use-staff";
 import { StaffShell } from "@/components/staff/StaffShell";
@@ -17,29 +17,30 @@ import { RequestDetails } from "@/components/staff/RequestDetails";
 import { Attachments } from "@/components/staff/Attachments";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-const BOARD_DEPT: Department = BOARD_DEPARTMENTS[0];
+type BoardSearch = { dept?: Department };
 
 export const Route = createFileRoute("/_authenticated/board")({
+  validateSearch: (search: Record<string, unknown>): BoardSearch =>
+    (DEPARTMENTS as readonly string[]).includes(search.dept as string) ? { dept: search.dept as Department } : {},
   head: () => ({
     meta: [
       { title: "Request Management · BAPS Houston Events" },
-      { name: "description", content: "Card board for tracking and assigning Photo / Video requests at BAPS Houston." },
+      { name: "description", content: "Card board where each team tracks and assigns its event requests at BAPS Houston." },
       { property: "og:title", content: "Request Management · BAPS Houston Events" },
-      { property: "og:description", content: "Track and assign Photo / Video requests." },
+      { property: "og:description", content: "Track and assign your team's event requests." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context }) =>
-    Promise.all([
-      context.queryClient.ensureQueryData(staffProfileQuery),
-      context.queryClient.ensureQueryData(boardQuery(BOARD_DEPT)),
-      context.queryClient.ensureQueryData(teamQuery(BOARD_DEPT)),
-    ]),
+  loaderDeps: ({ search }) => ({ dept: search.dept }),
+  loader: async ({ context, deps }) => {
+    const me = await context.queryClient.ensureQueryData(staffProfileQuery);
+    const dept = boardDepartment(me, deps.dept);
+    if (!dept) return;
+    await Promise.all([context.queryClient.ensureQueryData(boardQuery(dept)), context.queryClient.ensureQueryData(teamQuery(dept))]);
+  },
   component: BoardPage,
 });
-
-const ITEM_LABEL: Record<string, string> = Object.fromEntries([...DESIGN_ITEMS, ...MEDIA_ITEMS].map((i) => [i.id, i.label]));
 
 const initials = (name: string) =>
   name
@@ -67,8 +68,24 @@ type Filter = "all" | "mine" | "unassigned";
 
 function BoardPage() {
   const { data: me } = useSuspenseQuery(staffProfileQuery);
-  const { data: requests } = useSuspenseQuery(boardQuery(BOARD_DEPT));
-  const { data: team } = useSuspenseQuery(teamQuery(BOARD_DEPT));
+  const search = Route.useSearch();
+  const dept = boardDepartment(me, search.dept);
+  if (!dept || !hasRequestBoard(me)) {
+    return (
+      <StaffShell title="Request Management">
+        <p className="text-muted-foreground">This login isn't linked to a team yet.</p>
+        <Link to="/dashboard" className="mt-3 inline-block font-semibold text-account">
+          Back to dashboard
+        </Link>
+      </StaffShell>
+    );
+  }
+  return <Board key={dept} dept={dept} isMaster={me?.role === "master"} userId={me?.userId} />;
+}
+
+function Board({ dept, isMaster, userId }: { dept: Department; isMaster: boolean; userId?: string }) {
+  const { data: requests } = useSuspenseQuery(boardQuery(dept));
+  const { data: team } = useSuspenseQuery(teamQuery(dept));
   const qc = useQueryClient();
   const [openId, setOpenId] = useState<string | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
@@ -81,26 +98,15 @@ function BoardPage() {
 
   const visible = useMemo(() => {
     let l = requests;
-    if (filter === "mine") l = l.filter((r) => r.assigned_to === me?.userId);
+    if (filter === "mine") l = l.filter((r) => r.assigned_to === userId);
     if (filter === "unassigned") l = l.filter((r) => !r.assigned_to);
     const s = q.trim().toLowerCase();
     if (s) l = l.filter((r) => [r.event?.name, r.submission?.requester_name, r.submission?.team].some((v) => v?.toLowerCase().includes(s)));
     return l;
-  }, [requests, filter, q, me?.userId]);
-
-  if (!hasRequestBoard(me)) {
-    return (
-      <StaffShell title="Request Management">
-        <p className="text-muted-foreground">This board is for the {DEPT[BOARD_DEPT].label} team.</p>
-        <Link to="/dashboard" className="mt-3 inline-block font-semibold text-account">
-          Back to dashboard
-        </Link>
-      </StaffShell>
-    );
-  }
+  }, [requests, filter, q, userId]);
 
   const update = async (id: string, patch: { status?: string; assigned_to?: string | null; internal_notes?: string }) => {
-    const key = boardQuery(BOARD_DEPT).queryKey;
+    const key = boardQuery(dept).queryKey;
     const prev = qc.getQueryData(key);
     qc.setQueryData(key, (old) => old?.map((r) => (r.id === id ? { ...r, ...patch } : r)));
     const { error } = await supabase.from("requests").update({ ...patch, updated_at: new Date().toISOString() }).eq("id", id);
@@ -118,6 +124,27 @@ function BoardPage() {
 
   return (
     <StaffShell title="Request Management">
+      {isMaster && (
+        <nav aria-label="Team board" className="-mx-4 mb-4 flex gap-1.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+          {DEPARTMENTS.map((d) => {
+            const m = DEPT[d];
+            const on = d === dept;
+            return (
+              <Link
+                key={d}
+                to="/board"
+                search={{ dept: d }}
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors",
+                  on ? cn(m.border, m.softBg, m.text) : "border-border bg-card text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <m.icon className="h-4 w-4" /> {m.label}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="inline-flex w-fit rounded-lg border border-border bg-card p-1">
           {(
@@ -200,7 +227,7 @@ function BoardPage() {
       </div>
 
       {requests.length === 0 && (
-        <p className="mt-2 text-sm text-muted-foreground">New {DEPT[BOARD_DEPT].label} requests from the form show up here as cards.</p>
+        <p className="mt-2 text-sm text-muted-foreground">New {DEPT[dept].label} requests from the form show up here as cards.</p>
       )}
 
       <CardDialog r={open} members={members} nameOf={nameOf} onClose={() => setOpenId(null)} onUpdate={update} />
@@ -223,8 +250,8 @@ function BoardCard({
   onDragStart: (e: React.DragEvent) => void;
   onDragEnd: () => void;
 }) {
-  const d = (r.details ?? {}) as { items?: Record<string, string>; neededBy?: string };
-  const items = Object.keys(d.items ?? {}).map((k) => ITEM_LABEL[k] ?? k);
+  const { chips, date, dateLabel } = cardSummary(r.department as Department, r.details);
+  const items = chips.length > 4 ? [...chips.slice(0, 3), `+${chips.length - 3} more`] : chips;
   const files = ((r.attachments as unknown[]) ?? []).length;
   return (
     <button
@@ -252,9 +279,9 @@ function BoardCard({
         </div>
       )}
       <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-        {d.neededBy ? (
+        {date ? (
           <span className="inline-flex items-center gap-1">
-            <CalendarClock className="h-3.5 w-3.5" /> Due {fmtDate(d.neededBy, "MMM d")}
+            <CalendarClock className="h-3.5 w-3.5" /> {dateLabel} {fmtDate(date, "MMM d")}
           </span>
         ) : r.event ? (
           <span>{fmtDate(r.event.start_date, "MMM d")}</span>
