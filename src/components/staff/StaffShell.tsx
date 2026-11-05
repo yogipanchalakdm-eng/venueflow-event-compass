@@ -93,7 +93,7 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
               <Link
                 key={t.to}
                 to={t.to}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 activeProps={{ className: "bg-secondary text-foreground" }}
               >
                 <t.icon className="h-4 w-4" /> {t.label}
@@ -101,7 +101,7 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-2">
-            <Link to="/" className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground xl:flex">
+            <Link to="/" className="hidden items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground 2xl:flex">
               <FileText className="h-4 w-4" /> Request form
             </Link>
             <DropdownMenu>
