@@ -85,15 +85,15 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
   return (
     <div data-account={accountKey} className="min-h-screen">
       <div className="h-1 w-full bg-account" />
-      <header className="no-print sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
+      <header className="no-print sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
           <Brand to="/dashboard" />
-          <nav className="ml-4 hidden items-center gap-1 md:flex">
+          <nav className="ml-4 hidden items-center gap-1 lg:flex">
             {tabs.map((t) => (
               <Link
                 key={t.to}
                 to={t.to}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 activeProps={{ className: "bg-secondary text-foreground" }}
               >
                 <t.icon className="h-4 w-4" /> {t.label}
@@ -101,7 +101,7 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-2">
-            <Link to="/" className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground lg:flex">
+            <Link to="/" className="hidden items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground 2xl:flex">
               <FileText className="h-4 w-4" /> Request form
             </Link>
             <DropdownMenu>
@@ -118,6 +118,9 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
                   <span className="block text-xs font-normal text-muted-foreground">{isMaster ? "Master · sees everything" : me?.role === "member" ? `Team member · ${meta?.label ?? ""}` : "Team account"}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate({ to: "/" })}>
+                  <FileText className="mr-2 h-4 w-4" /> Request form
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => navigate({ to: "/auth" })}>
                   <Repeat className="mr-2 h-4 w-4" /> Switch account
                 </DropdownMenuItem>
@@ -132,7 +135,7 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
             </DropdownMenu>
           </div>
         </div>
-        <nav className="flex gap-1 overflow-x-auto px-4 pb-2 md:hidden">
+        <nav className="flex gap-1 overflow-x-auto px-4 pb-2 lg:hidden">
           {tabs.map((t) => (
             <Link
               key={t.to}

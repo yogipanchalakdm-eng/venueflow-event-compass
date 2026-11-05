@@ -41,16 +41,19 @@ function StaffButton() {
 function Index() {
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <div aria-hidden className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-primary/10 blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -bottom-48 -left-40 h-[480px] w-[480px] rounded-full bg-selected/40 blur-3xl" />
-      <header className="relative mx-auto flex max-w-5xl items-center justify-between px-4 py-5 sm:px-6">
+      <div aria-hidden className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-gold/20 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-48 -left-40 h-[480px] w-[480px] rounded-full bg-selected/70 blur-3xl" />
+      <header className="relative mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-5 sm:px-6">
         <Brand />
         <StaffButton />
       </header>
       <main className="relative mx-auto max-w-5xl px-4 pb-20 pt-6 sm:px-6 sm:pt-10">
         <div className="mb-8 sm:mb-10">
+          <p className="mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+            <span className="h-2 w-2 rounded-full bg-gold" /> Event requests
+          </p>
           <h1 className="text-4xl font-bold leading-[1.05] sm:text-5xl">Submit an event request</h1>
-          <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
+          <p className="mt-3 max-w-2xl text-lg font-light text-muted-foreground">
             Tell us about your event and what you need. Add a request for each team — they'll each get just their part.
           </p>
         </div>

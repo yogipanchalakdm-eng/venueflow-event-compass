@@ -1,6 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Crown, Loader2 } from "lucide-react";
+import { ArrowLeft, Crown, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -72,8 +72,15 @@ function AuthPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="mx-auto flex max-w-5xl items-center justify-between px-4 py-5 sm:px-6">
+      <header className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-5 sm:px-6">
         <Brand />
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-semibold shadow-soft transition-colors hover:border-primary"
+        >
+          <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Back to request form</span>
+          <span className="sm:hidden">Request form</span>
+        </Link>
       </header>
       <main className="mx-auto grid max-w-5xl gap-8 px-4 pb-16 pt-4 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:pt-10">
         <div>
@@ -210,6 +217,9 @@ function AuthPage() {
               ? "Forgot your password? Ask your team lead to reset it from the Team page."
               : "Forgot a password? The master account can reset it from the Accounts page."}
           </p>
+          <Link to="/" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+            <ArrowLeft className="h-4 w-4" /> Not staff? Submit an event request
+          </Link>
         </form>
       </main>
     </div>

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { STAFF_ACCOUNTS, accountEmail, type Department } from "./departments";
+import { DEPARTMENTS, STAFF_ACCOUNTS, accountEmail, type Department } from "./departments";
 
 export type StaffRole = "master" | "lead" | "member";
 export type Caller = { role: StaffRole | null; department: Department | null };
 
 /** Departments that get the card-style "Request Management" board. */
-export const BOARD_DEPARTMENTS: readonly Department[] = ["photo_video"];
+export const BOARD_DEPARTMENTS: readonly Department[] = DEPARTMENTS;
 
 const RESERVED = new Set<string>([...STAFF_ACCOUNTS.map((a) => a.slug), "admin", "staff", "team"]);
 
@@ -42,6 +42,13 @@ export function hasRequestBoard(caller: Caller | null | undefined): boolean {
   if (!caller) return false;
   if (caller.role === "master") return true;
   return !!caller.department && BOARD_DEPARTMENTS.includes(caller.department);
+}
+
+/** Which department's board to show: teams always see their own; Master can pick any. */
+export function boardDepartment(caller: Caller | null | undefined, requested?: Department | null): Department | null {
+  if (!caller) return null;
+  if (caller.role === "master") return requested && BOARD_DEPARTMENTS.includes(requested) ? requested : BOARD_DEPARTMENTS[0];
+  return caller.department && BOARD_DEPARTMENTS.includes(caller.department) ? caller.department : null;
 }
 
 export const roleLabel = (role: string | null | undefined) =>

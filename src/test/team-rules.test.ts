@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canManageAccount, canManageTeam, hasRequestBoard, memberEmail, usernameSchema } from "@/lib/team";
+import { boardDepartment, canManageAccount, canManageTeam, hasRequestBoard, memberEmail, usernameSchema } from "@/lib/team";
 
 const master = { role: "master" as const, department: null };
 const pvLead = { role: "lead" as const, department: "photo_video" as const };
@@ -34,11 +34,21 @@ describe("who can reset or remove a login", () => {
 });
 
 describe("Request Management board", () => {
-  it("is available to the Photo / Video team and Master only", () => {
+  it("is available to every department and Master", () => {
     expect(hasRequestBoard(pvLead)).toBe(true);
     expect(hasRequestBoard(pvMember)).toBe(true);
     expect(hasRequestBoard(master)).toBe(true);
-    expect(hasRequestBoard(kitchenLead)).toBe(false);
+    expect(hasRequestBoard(kitchenLead)).toBe(true);
+    expect(hasRequestBoard({ role: "member", department: "parking" })).toBe(true);
+    expect(hasRequestBoard({ role: null, department: null })).toBe(false);
+  });
+  it("shows each team only its own board", () => {
+    expect(boardDepartment(kitchenLead, "photo_video")).toBe("kitchen");
+    expect(boardDepartment(pvMember)).toBe("photo_video");
+  });
+  it("lets Master switch between team boards", () => {
+    expect(boardDepartment(master, "parking")).toBe("parking");
+    expect(boardDepartment(master)).toBe("facilities");
   });
 });
 
