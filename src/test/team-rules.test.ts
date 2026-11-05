@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canManageAccount, canManageTeam, hasRequestBoard, memberEmail, usernameSchema } from "@/lib/team";
+import { boardDepartment, canManageAccount, canManageTeam, hasRequestBoard, memberEmail, usernameSchema } from "@/lib/team";
 
 const master = { role: "master" as const, department: null };
 const pvLead = { role: "lead" as const, department: "photo_video" as const };

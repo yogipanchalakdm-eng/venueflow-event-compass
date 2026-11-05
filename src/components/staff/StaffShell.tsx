@@ -85,10 +85,10 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
   return (
     <div data-account={accountKey} className="min-h-screen">
       <div className="h-1 w-full bg-account" />
-      <header className="no-print sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
+      <header className="no-print sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
           <Brand to="/dashboard" />
-          <nav className="ml-4 hidden items-center gap-1 md:flex">
+          <nav className="ml-4 hidden items-center gap-1 lg:flex">
             {tabs.map((t) => (
               <Link
                 key={t.to}
@@ -101,7 +101,7 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-2">
-            <Link to="/" className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground lg:flex">
+            <Link to="/" className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground xl:flex">
               <FileText className="h-4 w-4" /> Request form
             </Link>
             <DropdownMenu>
@@ -132,7 +132,7 @@ export function StaffShell({ children, title, actions }: { children: ReactNode; 
             </DropdownMenu>
           </div>
         </div>
-        <nav className="flex gap-1 overflow-x-auto px-4 pb-2 md:hidden">
+        <nav className="flex gap-1 overflow-x-auto px-4 pb-2 lg:hidden">
           {tabs.map((t) => (
             <Link
               key={t.to}
