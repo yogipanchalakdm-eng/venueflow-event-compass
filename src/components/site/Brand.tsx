@@ -1,15 +1,16 @@
 import { Link } from "@tanstack/react-router";
+import logo from "@/assets/cultural-center-logo.png.asset.json";
 
 export function Brand({ to = "/" }: { to?: "/" | "/dashboard" }) {
   return (
-    <Link to={to} className="flex items-center gap-3">
-      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary font-display text-lg font-bold text-primary-foreground">
-        B
-      </span>
-      <span className="leading-tight">
-        <span className="block font-display text-base font-semibold">BAPS Houston</span>
-        <span className="block text-xs text-muted-foreground">Event requests</span>
-      </span>
+    <Link to={to} className="flex shrink-0 items-center" aria-label="BAPS Houston Cultural Center — home">
+      <img
+        src={logo.url}
+        alt="BAPS Houston Cultural Center"
+        width={1580}
+        height={312}
+        className="h-8 w-auto sm:h-10"
+      />
     </Link>
   );
 }
