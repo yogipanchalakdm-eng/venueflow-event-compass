@@ -9,7 +9,7 @@ export function Brand({ to = "/" }: { to?: "/" | "/dashboard" }) {
         alt="BAPS Houston Cultural Center"
         width={1580}
         height={312}
-        className="h-8 w-auto sm:h-10"
+        className="h-9 w-auto sm:h-11"
       />
     </Link>
   );
