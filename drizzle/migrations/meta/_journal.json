@@ -36,6 +36,13 @@
       "when": 1793754657417,
       "tag": "0004_user_roles_username",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794798615783,
+      "tag": "0005_event_ranges_and_staff_calendar",
+      "breakpoints": true
     }
   ]
 }

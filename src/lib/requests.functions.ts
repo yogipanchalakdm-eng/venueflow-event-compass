@@ -26,7 +26,7 @@ export const submitRequest = createServerFn({ method: "POST" })
       }
     }
 
-    const range = submissionDateRange(data.eventDate, data.requests);
+    const range = submissionDateRange(data.eventDate, data.requests, data.eventEndDate);
     const normalized = normalizeEventName(data.eventName);
 
     const { data: candidates, error: candErr } = await supabaseAdmin
@@ -44,8 +44,6 @@ export const submitRequest = createServerFn({ method: "POST" })
         .insert({
           name: data.eventName,
           normalized_name: normalized,
-          start_date: range.start,
-          end_date: range.end,
           source: "request",
         })
         .select("id")
@@ -65,16 +63,19 @@ export const submitRequest = createServerFn({ method: "POST" })
         team: data.team,
         event_name: data.eventName,
         event_date: data.eventDate,
+        event_end_date: data.eventEndDate,
       })
       .select("id")
       .single();
     if (subErr || !submission) throw new Error("Could not save your request. Please try again.");
 
+    if (!eventId) throw new Error("Could not save your request. Please try again.");
+    const savedEventId = eventId;
     const rows = data.requests.map((r) => {
       const { start, end } = requestDateRange(r as { department: string; details: Record<string, unknown> });
       return {
         submission_id: submission.id,
-        event_id: eventId!,
+        event_id: savedEventId,
         department: r.department,
         details: r.details as never,
         comments: r.comments || null,

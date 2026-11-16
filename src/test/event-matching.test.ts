@@ -23,6 +23,9 @@ describe("grouping requests into one event", () => {
 });
 
 describe("event date range", () => {
+  it("retains both event dates even when AV has no department dates", () => {
+    expect(submissionDateRange("2026-11-21", [{ department: "audio_video", details: {} }], "2026-11-23")).toEqual({ start: "2026-11-21", end: "2026-11-23" });
+  });
   it("spans the event date and every department's dates", () => {
     const range = submissionDateRange("2026-11-08", [
       { department: "facilities", details: { startDate: "2026-11-07", endDate: "2026-11-09" } },

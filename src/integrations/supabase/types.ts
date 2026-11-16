@@ -130,6 +130,7 @@ export type Database = {
           created_at: string
           email: string
           event_date: string
+          event_end_date: string | null
           event_id: string
           event_name: string
           id: string
@@ -141,6 +142,7 @@ export type Database = {
           created_at?: string
           email: string
           event_date: string
+          event_end_date?: string | null
           event_id: string
           event_name: string
           id?: string
@@ -152,6 +154,7 @@ export type Database = {
           created_at?: string
           email?: string
           event_date?: string
+          event_end_date?: string | null
           event_id?: string
           event_name?: string
           id?: string
@@ -214,6 +217,17 @@ export type Database = {
         Returns: undefined
       }
       refresh_event: { Args: { _event_id: string }; Returns: undefined }
+      staff_calendar_events: {
+        Args: never
+        Returns: {
+          can_open: boolean
+          departments: Database["public"]["Enums"]["department"][]
+          end_date: string
+          id: string
+          name: string
+          start_date: string
+        }[]
+      }
       user_department: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["department"]

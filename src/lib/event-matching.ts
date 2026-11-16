@@ -73,8 +73,8 @@ export function requestDateRange(req: DatedRequest): { start: string | null; end
 }
 
 /** Overall range of a submission: the event date plus every request's dates. */
-export function submissionDateRange(eventDate: string, requests: DatedRequest[]) {
-  const all = [eventDate];
+export function submissionDateRange(eventDate: string, requests: DatedRequest[], eventEndDate = eventDate) {
+  const all = [eventDate, eventEndDate];
   for (const r of requests) {
     const { start, end } = requestDateRange(r);
     if (start) all.push(start);

@@ -19,8 +19,8 @@ import {
   PhotoVideoSection,
 } from "./DepartmentSections";
 
-type About = { requesterName: string; phone: string; email: string; eventName: string; eventDate: string; team: string };
-const emptyAbout: About = { requesterName: "", phone: "", email: "", eventName: "", eventDate: "", team: "" };
+type About = { requesterName: string; phone: string; email: string; eventName: string; eventDate: string; eventEndDate: string; team: string };
+const emptyAbout: About = { requesterName: "", phone: "", email: "", eventName: "", eventDate: "", eventEndDate: "", team: "" };
 
 function SectionCard({ step, title, aside, children }: { step: string; title: string; aside?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -56,6 +56,7 @@ export function RequestForm() {
       ds.map((d, i) => {
         if (d.key !== key || d.department === dept) return d;
         const details = defaultDetails(dept, about.eventDate);
+        if (isMapDept(dept)) details.endDate = about.eventEndDate || about.eventDate;
         // Facilities and IT usually cover the same rooms: start from the earlier pick.
         if (isMapDept(dept)) {
           const src = mapSources(ds, i)[0];
@@ -188,10 +189,13 @@ export function RequestForm() {
           <Field label="Event name" required error={err("eventName")} className="sm:col-span-2">
             <TextInput placeholder="What's the occasion?" value={about.eventName} onChange={(e) => setA("eventName", e.target.value)} invalid={!!err("eventName")} />
           </Field>
-          <Field label="Event date" required error={err("eventDate")}>
-            <TextInput type="date" value={about.eventDate} onChange={(e) => setA("eventDate", e.target.value)} invalid={!!err("eventDate")} />
+          <Field label="Event start date" required error={err("eventDate")}>
+            <TextInput aria-label="Event start date" type="date" value={about.eventDate} onChange={(e) => setA("eventDate", e.target.value)} invalid={!!err("eventDate")} />
           </Field>
-          <Field label="Requesting team / ministry" required error={err("team")}>
+          <Field label="Event end date" required error={err("eventEndDate")}>
+            <TextInput aria-label="Event end date" type="date" min={about.eventDate || undefined} value={about.eventEndDate} onChange={(e) => setA("eventEndDate", e.target.value)} invalid={!!err("eventEndDate")} />
+          </Field>
+          <Field label="Requesting team / ministry" required error={err("team")} className="sm:col-span-2">
             <TextInput placeholder="e.g. Youth ministry" value={about.team} onChange={(e) => setA("team", e.target.value)} invalid={!!err("team")} />
           </Field>
         </div>

@@ -188,9 +188,10 @@ export const submissionSchema = z.object({
   email: z.string().trim().email("Enter a valid email").max(255),
   eventName: z.string().trim().min(2, "Enter the event name").max(150),
   eventDate: date,
+  eventEndDate: date,
   team: z.string().trim().min(1, "Enter your team or ministry").max(120),
   requests: z.array(requestItemSchema).min(1, "Add at least one request").max(12),
-});
+}).refine((v) => v.eventEndDate >= v.eventDate, { path: ["eventEndDate"], message: "End date can't be before the start date" });
 
 export type SubmissionInput = z.infer<typeof submissionSchema>;
 export type RequestItem = z.infer<typeof requestItemSchema>;

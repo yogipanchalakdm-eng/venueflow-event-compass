@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { emptyDraft, resolveRooms, toPayloadDetails, type DraftRequest } from "@/components/form/draft";
-import { audioVideoSchema, itNetworkSchema } from "@/lib/request-schema";
+import { audioVideoSchema, itNetworkSchema, submissionSchema } from "@/lib/request-schema";
 
 const facilities: DraftRequest = {
   ...emptyDraft(),
@@ -8,6 +8,22 @@ const facilities: DraftRequest = {
   department: "facilities",
   details: { mapMode: "new", sharedKey: "", rooms: ["f1-gym", "f2-room-201"], startDate: "2026-11-08", endDate: "2026-11-08", startTime: "08:00", endTime: "17:00" },
 };
+
+describe("event start and end dates", () => {
+  const submission = { requesterName: "Ajay Patel", phone: "7135550100", email: "ajay@example.com", eventName: "Workshop", eventDate: "2026-11-21", eventEndDate: "2026-11-23", team: "Youth", requests: [{ department: "audio_video", details: { locations: ["Gym"], items: ["fender"] } }] };
+  it("requires the event end date", () => {
+    expect(submissionSchema.safeParse({ ...submission, eventEndDate: undefined }).success).toBe(false);
+  });
+  it("accepts a multi-day event", () => {
+    expect(submissionSchema.parse(submission).eventEndDate).toBe("2026-11-23");
+  });
+  it("rejects an end date before the start date", () => {
+    expect(submissionSchema.safeParse({ ...submission, eventEndDate: "2026-11-20" }).success).toBe(false);
+  });
+  it("accepts a single-day event", () => {
+    expect(submissionSchema.safeParse({ ...submission, eventEndDate: "2026-11-21" }).success).toBe(true);
+  });
+});
 
 describe("IT / Network can reuse the Facilities map", () => {
   it("copies the rooms picked for Facilities when 'use same rooms' is chosen", () => {
